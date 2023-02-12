@@ -1,15 +1,5 @@
 #include "GorlamiHeader.fxh"
 
-float RGBCVtoHUE(in float3 RGB, in float C, in float V) {
-        float3 Delta = (V - RGB) / C;
-        Delta.rgb -= Delta.brg;
-        Delta.rgb += float3(2,4,6);
-        Delta.brg = step(V, RGB) * Delta.brg;
-        float H;
-        H = max(Delta.r, max(Delta.g, Delta.b));
-        return frac(H / 6);
-}
-
 float3 RGBtoHSL(in float3 RGB) {
     float3 HSL = 0;
     float U, V;
@@ -23,14 +13,6 @@ float3 RGBtoHSL(in float3 RGB) {
         HSL.y = C / (1 - abs(2 * HSL.z - 1));
     }
     return HSL;
-}
-    
-float3 HUEtoRGB(in float H) 
-{
-    float R = abs(H * 6 - 3) - 1;
-    float G = 2 - abs(H * 6 - 2);
-    float B = 2 - abs(H * 6 - 4);
-    return saturate(float3(R,G,B));
 }
     
 float3 HSLtoRGB(in float3 HSL)
@@ -85,7 +67,6 @@ float3 FlattenColours(float2 texcoord) {
     float3 colour = RGBtoHSL(Colours(texcoord).xyz);
     float invFactor = 1.0 / (colorFlattenFactor);
 
-    float colourOffsetX = (round(colour.x * invFactor) - (colour.x * invFactor)) / invFactor;
     float colourOffsetY = (round(colour.y * invFactor) - (colour.y * invFactor)) / invFactor;
     float colourOffsetZ = (round(colour.z * invFactor) - (colour.z * invFactor)) / invFactor;
 
