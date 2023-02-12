@@ -57,6 +57,6 @@ uniform float colorFlattenFactor <
     ui_label = "Color Flatten Factor";
     ui_tooltip = "COLOR_FLATTEN_FACTOR=<value>";
     ui_min = 0.01;
-    ui_max = 0.5;
+    ui_max = 0.3;
     ui_step = 0.01;
-> = 0.15;
+> = 0.05;
