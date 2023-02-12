@@ -13,23 +13,34 @@ float3 ScreenSpaceDepthPS(float4 vpos : SV_Position, float2 texcoord : TexCoord)
     return float3(depth, depth, depth);
 }
 
-technique InvertColours {
+float3 FlattenPS(float4 vpos : SV_Position, float2 texcoord : TexCoord) : SV_Target {
+    return FlattenColours(texcoord);
+}
+
+technique TEST_InvertColours {
     pass {
         VertexShader = PostProcessVS;
         PixelShader = InvertColoursPS;
     }
 }
 
-technique ShowNormals {
+technique TEST_ShowNormals {
     pass {
         VertexShader = PostProcessVS;
         PixelShader = ScreenSpaceNormalsPS;
     }
 }
 
-technique ShowDepth {
+technique TEST_ShowDepth {
     pass {
         VertexShader = PostProcessVS;
         PixelShader = ScreenSpaceDepthPS;
+    }
+}
+
+technique TEST_Flatten {
+    pass {
+        VertexShader = PostProcessVS;
+        PixelShader = FlattenPS;
     }
 }
