@@ -50,13 +50,3 @@ uniform float depthMultiplier <
 	ui_min = 0.0; ui_max = 1000.0;
 	ui_step = 0.001;
 > = RESHADE_DEPTH_MULTIPLIER;
-
-uniform float colorFlattenFactor <
-    ui_category = "Settings";
-    ui_type = "drag";
-    ui_label = "Color Flatten Factor";
-    ui_tooltip = "COLOR_FLATTEN_FACTOR=<value>";
-    ui_min = 0.01;
-    ui_max = 0.3;
-    ui_step = 0.01;
-> = 0.05;

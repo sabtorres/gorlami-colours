@@ -73,23 +73,14 @@ float3 ScreenSpaceNormals(float2 texcoord) {
     return normalize(cross(vCenter - vUp, vCenter - vRight)) + 1.0 / 2.0;
 }
 
+float3 GeometryNormals(float2 texcoord) {
+    return (ScreenSpaceNormals(texcoord).xyz - 0.5) * 2.0;
+}
+
 float4 Colours(float2 texcoord) {
     return tex2D(ReShade::BackBuffer, texcoord);
 }
 
 float4 InvertColours(float2 texcoord) {
     return float4(1.0, 1.0, 1.0, 1.0) - Colours(texcoord);
-}
-
-float3 FlattenColours(float2 texcoord) {
-    float3 colour = RGBtoHSL(Colours(texcoord).xyz);
-    float incidence = dot(ScreenSpaceNormals(texcoord), float3(1.0, 0.0, 1.0));
-    float invFactor = 1.0 / colorFlattenFactor; //* (exp2(-ScreenSpaceDepth(texcoord)) - 1.0 * 2.0);
-
-    float colourOffsetY = (round(colour.y * invFactor) - (colour.y * invFactor)) / invFactor;
-    float colourOffsetZ = (round(colour.z * invFactor) - (colour.z * invFactor)) / invFactor;
-
-    float3 colourOffset = float3(0.0, colourOffsetY, colourOffsetZ);
-
-    return HSLtoRGB(colour + colourOffset);
 }
