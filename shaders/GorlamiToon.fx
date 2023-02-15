@@ -5,11 +5,9 @@ UNIFORMS AND DEFINITIONS
 */
 
 static const float DEPTH_THRESHOLD = 0.005;
-static const float NORMAL_THRESHOLD = 0.5;
+static const float NORMAL_THRESHOLD = 0.8;
 static const float PI = 3.1415;
 static const float FLOAT_MAX = 255.0;
-
-static const int surfaceBlur = 0;
 
 uniform int kuwaharaFilter <
     ui_category = "Colours";
@@ -95,7 +93,7 @@ float4 KuwaharaOperator(float2 texcoord) {
 SHADER PASSES
 */
 
-void PrePS(in float2 texcoord : TEXCOORD0, out float4 blurTex : SV_Target) {
+void PrePS(float4 vpos : SV_Position, in float2 texcoord : TEXCOORD0, out float4 blurTex : SV_Target) {
     if (kuwaharaFilter == 0) {
         blurTex = Colours(texcoord);
     }
@@ -104,11 +102,11 @@ void PrePS(in float2 texcoord : TEXCOORD0, out float4 blurTex : SV_Target) {
     }
 }
 
-float4 PostPS(float4 vpos : SV_Position, in float2 texcoord : TEXCOORD0) : SV_Target {
+void PostPS(float4 vpos : SV_Position, in float2 texcoord : TEXCOORD0, out float4 pixel : SV_Target) {
     float4 colour = tex2D(blurSampler, texcoord);
 
     if (freestyleThickness == 0) {
-        return colour;
+        pixel = colour;
     }
     else {
         int maxDistance = freestyleThickness * freestyleThickness;
@@ -119,19 +117,19 @@ float4 PostPS(float4 vpos : SV_Position, in float2 texcoord : TEXCOORD0) : SV_Ta
         for (offset.x = -freestyleThickness; offset.x <= freestyleThickness; offset.x++) {
             for (offset.y = -freestyleThickness; offset.y <= freestyleThickness; offset.y++) {
                 float2 nCoords = texcoord + ReShade::PixelSize * offset;
-                //float4 pixelColour = tex2D(blurSampler, nCoords);
                 float3 pixelNormal = ScreenSpaceNormals(nCoords);
                 float pixelDepth = ScreenSpaceDepth(nCoords);
                 if(dot(offset, offset) <= maxDistance
                 && abs(depth / pixelDepth) <= threshold
                 && dot(normal, pixelNormal) >= NORMAL_THRESHOLD) {
-                    return float4(0.0, 0.0, 0.0, 1.0);
+                    pixel = float4(0.0, 0.0, 0.0, 1.0);
+                    return;
                 }
             }
         }
     }
 
-    return colour;
+    pixel = colour;
 }
 
 technique ToonShader {
